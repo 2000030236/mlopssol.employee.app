@@ -71,57 +71,19 @@ function deleteRecord(index) {
     renderTable();
 }
 
-function editRecord(index) {
-    records[index].isEditing = true;
-    renderTable();
-}
-
-function saveEdit(index) {
-    const nameInput = document.getElementById(`edit-name-${index}`);
-    const timeInput = document.getElementById(`edit-time-${index}`);
-    if (nameInput && timeInput) {
-        records[index].name = nameInput.value.trim();
-        records[index].time = timeInput.value.trim();
-        records[index].date = new Date().toLocaleDateString();
-    }
-    delete records[index].isEditing;
-    saveRecords();
-    renderTable();
-}
-
-function cancelEdit(index) {
-    delete records[index].isEditing;
-    renderTable();
-}
-
-form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const name = nameInput.value.trim();
-    if (name) {
-        addRecord(name);
-        nameInput.value = '';
-    }
-});
-
-
-function downloadCSV() {
+function downloadXLS() {
     let selectedDate = reportDateInput.value;
-    // Add UTF-8 BOM for Excel compatibility
-    let csv = '\uFEFFName;Date;Time\n';
     let filteredRecords = records;
     if (selectedDate) {
-        // Convert selectedDate (yyyy-mm-dd) to local date string format
         const dateObj = new Date(selectedDate);
-        // Format as yyyy-mm-dd for comparison and output
         const formattedDate = dateObj.toISOString().slice(0, 10);
         filteredRecords = records.filter(rec => {
-            // Try to match both local and ISO formats
             const recDate = new Date(rec.date);
             return recDate.toISOString().slice(0, 10) === formattedDate;
         });
     }
+    let table = '<table border="1"><tr><th>Name</th><th>Date</th><th>Time</th></tr>';
     filteredRecords.forEach(rec => {
-        // Output date as yyyy-mm-dd and wrap in quotes for Excel, force text format
         let outDate;
         const d = new Date(rec.date);
         if (!isNaN(d.getTime())) {
@@ -132,20 +94,19 @@ function downloadCSV() {
         } else {
             outDate = rec.date;
         }
-        // Format date and time as text for Excel
-        let outDateText = ` '${outDate}`;
-        let outTimeText = ` '${rec.time}`;
-    csv += `${rec.name};${outDateText};${outTimeText}\n`;
+        table += `<tr><td>${rec.name}</td><td>${outDate}</td><td>${rec.time}</td></tr>`;
     });
-    const blob = new Blob([csv], { type: 'text/csv' });
+    table += '</table>';
+    const blob = new Blob([table], { type: 'application/vnd.ms-excel' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `attendance_${selectedDate ? selectedDate : 'all'}.csv`;
+    a.download = `attendance_${selectedDate ? selectedDate : 'all'}.xls`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 }
+// ...existing code...
 
-downloadBtn.addEventListener('click', downloadCSV);
+downloadBtn.addEventListener('click', downloadXLS);
