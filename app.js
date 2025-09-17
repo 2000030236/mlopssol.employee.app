@@ -24,6 +24,7 @@ function saveRecords() {
 }
 
 loadRecords();
+renderTable();
 
 function addRecord(name) {
     const now = new Date();
@@ -122,13 +123,13 @@ function downloadCSV() {
     filteredRecords.forEach(rec => {
         // Output date as yyyy-mm-dd and wrap in quotes for Excel, force text format
         let outDate;
-        try {
-            const d = new Date(rec.date);
+        const d = new Date(rec.date);
+        if (!isNaN(d.getTime())) {
             const day = String(d.getDate()).padStart(2, '0');
             const month = String(d.getMonth() + 1).padStart(2, '0');
             const year = d.getFullYear();
             outDate = `${day}/${month}/${year}`;
-        } catch {
+        } else {
             outDate = rec.date;
         }
         // Format date and time as text for Excel
