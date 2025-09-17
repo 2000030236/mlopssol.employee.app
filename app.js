@@ -105,7 +105,8 @@ form.addEventListener('submit', function(e) {
 
 function downloadCSV() {
     let selectedDate = reportDateInput.value;
-    let csv = 'Name,Date,Time\n';
+    // Add UTF-8 BOM for Excel compatibility
+    let csv = '\uFEFF"Name";"Date";"Time"\n';
     let filteredRecords = records;
     if (selectedDate) {
         // Convert selectedDate (yyyy-mm-dd) to local date string format
@@ -119,16 +120,21 @@ function downloadCSV() {
         });
     }
     filteredRecords.forEach(rec => {
-        // Output date as yyyy-mm-dd
+        // Output date as yyyy-mm-dd and wrap in quotes for Excel, force text format
         let outDate;
         try {
-            outDate = new Date(rec.date).toISOString().slice(0, 10);
+            const d = new Date(rec.date);
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = d.getFullYear();
+            outDate = `${day}/${month}/${year}`;
         } catch {
             outDate = rec.date;
         }
-        // Format time as text for Excel
-        let outTime = `'${rec.time}`;
-        csv += `${rec.name},${outDate},${outTime}\n`;
+        // Format date and time as text for Excel
+        let outDateText = ` '${outDate}`;
+        let outTimeText = ` '${rec.time}`;
+        csv += `"${rec.name}";"${outDateText}";"${outTimeText}"\n`;
     });
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
