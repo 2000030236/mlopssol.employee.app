@@ -1,0 +1,153 @@
+
+body {
+  background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+#root {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: left;
+}
+
+.container {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+  padding: 2.5rem 2rem 2rem 2rem;
+  margin-top: 2rem;
+}
+
+h2 {
+  background: linear-gradient(90deg, #0078d4 0%, #00c6fb 100%);
+  color: #fff;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(0,120,212,0.08);
+}
+
+.attendance-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 1rem;
+  background: #f8fbff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,120,212,0.05);
+}
+.attendance-table th, .attendance-table td {
+  border-bottom: 1px solid #e3eaf3;
+  padding: 12px 10px;
+  text-align: left;
+  font-size: 1rem;
+}
+.attendance-table th {
+  background: #e3f0fa;
+  color: #0078d4;
+  font-weight: 600;
+}
+.attendance-table tr:last-child td {
+  background: #f0f7ff;
+}
+.attendance-table tr:hover td {
+  background: #e6f7ff;
+  transition: background 0.2s;
+}
+.attendance-table input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.attendance-table input:focus {
+  outline: none;
+  background: #e3f0fa;
+  box-shadow: 0 0 0 2px #0078d4;
+}
+
+label {
+  font-weight: 500;
+  color: #0078d4;
+  margin-right: 8px;
+}
+
+input[type="date"] {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #b3d1f3;
+  background: #f8fbff;
+  font-size: 1rem;
+  color: #0078d4;
+  margin-right: 8px;
+}
+
+button {
+  background: linear-gradient(90deg, #0078d4 0%, #00c6fb 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,120,212,0.08);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+button:hover {
+  background: linear-gradient(90deg, #005fa3 0%, #0096c7 100%);
+  box-shadow: 0 4px 16px rgba(0,120,212,0.12);
+}
+
+.attendance-table tr:last-child input {
+  background: #f0f7ff;
+}
+
+p {
+  color: #555;
+  font-size: 1rem;
+  margin-top: 24px;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
