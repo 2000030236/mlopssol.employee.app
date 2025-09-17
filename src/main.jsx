@@ -6,7 +6,7 @@ import App from './App.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter basename="/employee.app/">  // Add this with your repo name
+    <BrowserRouter basename="/employee.app">  // No trailing slash
       <App />
     </BrowserRouter>
   </StrictMode>,
