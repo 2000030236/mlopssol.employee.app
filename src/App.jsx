@@ -265,7 +265,7 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false);
 
   return (
-    <Router>
+    <Router basename="/employee.app">
       <Routes>
         <Route path="/" element={loggedIn ? <Navigate to="/attendance" /> : <Login onLogin={() => setLoggedIn(true)} />} />
         <Route path="/attendance" element={loggedIn ? <AttendanceSheet /> : <Navigate to="/" />} />
