@@ -132,7 +132,9 @@ function downloadCSV() {
     const safeName = `"${rec.name.replace(/"/g, '""')}"`;
     // Prefix time with single quote to force Excel to treat as text
     const safeTime = `"'${rec.time.replace(/"/g, '""')}"`;
-    csv += `${safeName},${rec.date},${safeTime}\n`;
+    // Prefix date with single quote to force Excel to treat as text
+    const safeDate = `"'${rec.date}"`;
+    csv += `${safeName},${safeDate},${safeTime}\n`;
     });
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
