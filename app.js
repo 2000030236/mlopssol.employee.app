@@ -17,6 +17,14 @@ function loadRecords() {
             records = [];
         }
     }
+    // If no records exist, add a test record for verification
+    if (!records || records.length === 0) {
+        const now = new Date();
+        const date = now.toISOString().slice(0, 10);
+        const time = now.toLocaleTimeString();
+        records = [{ name: 'Test User', date, time }];
+        saveRecords();
+    }
 }
 
 function saveRecords() {
@@ -28,7 +36,8 @@ renderTable();
 
 function addRecord(name) {
     const now = new Date();
-    const date = now.toLocaleDateString();
+    // Store date in ISO format (yyyy-mm-dd)
+    const date = now.toISOString().slice(0, 10);
     const time = now.toLocaleTimeString();
     const record = { name, date, time };
     records.push(record);
@@ -38,7 +47,12 @@ function addRecord(name) {
 
 function renderTable() {
     tableBody.innerHTML = '';
-    records.forEach((rec, idx) => {
+    let filteredRecords = records;
+    const selectedDate = reportDateInput.value;
+    if (selectedDate) {
+        filteredRecords = records.filter(rec => rec.date === selectedDate);
+    }
+    filteredRecords.forEach((rec, idx) => {
         const row = document.createElement('tr');
         if (rec.isEditing) {
             row.innerHTML = `
@@ -71,42 +85,67 @@ function deleteRecord(index) {
     renderTable();
 }
 
-function downloadXLS() {
+function editRecord(index) {
+    records[index].isEditing = true;
+    renderTable();
+}
+
+function saveEdit(index) {
+    const nameInput = document.getElementById(`edit-name-${index}`);
+    const timeInput = document.getElementById(`edit-time-${index}`);
+    if (nameInput && timeInput) {
+        records[index].name = nameInput.value.trim();
+        records[index].time = timeInput.value.trim();
+        // Do NOT overwrite the date when editing
+    }
+    delete records[index].isEditing;
+    saveRecords();
+    renderTable();
+}
+
+function cancelEdit(index) {
+    delete records[index].isEditing;
+    renderTable();
+}
+
+form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const name = nameInput.value.trim();
+    if (name) {
+        addRecord(name);
+        nameInput.value = '';
+    }
+});
+
+
+function downloadCSV() {
     let selectedDate = reportDateInput.value;
+    // Add UTF-8 BOM for Excel compatibility
+    let csv = '\uFEFFName,Date,Time\n'; // Use comma for columns
     let filteredRecords = records;
     if (selectedDate) {
-        const dateObj = new Date(selectedDate);
-        const formattedDate = dateObj.toISOString().slice(0, 10);
-        filteredRecords = records.filter(rec => {
-            const recDate = new Date(rec.date);
-            return recDate.toISOString().slice(0, 10) === formattedDate;
-        });
+        // selectedDate is already yyyy-mm-dd
+        filteredRecords = records.filter(rec => rec.date === selectedDate);
     }
-    let table = '<table border="1"><tr><th>Name</th><th>Date</th><th>Time</th></tr>';
     filteredRecords.forEach(rec => {
-        let outDate;
-        const d = new Date(rec.date);
-        if (!isNaN(d.getTime())) {
-            const day = String(d.getDate()).padStart(2, '0');
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const year = d.getFullYear();
-            outDate = `${day}/${month}/${year}`;
-        } else {
-            outDate = rec.date;
-        }
-        table += `<tr><td>${rec.name}</td><td>${outDate}</td><td>${rec.time}</td></tr>`;
+        // Date is already in yyyy-mm-dd format
+    const safeName = `"${rec.name.replace(/"/g, '""')}"`;
+    // Prefix time with single quote to force Excel to treat as text
+    const safeTime = `"'${rec.time.replace(/"/g, '""')}"`;
+    csv += `${safeName},${rec.date},${safeTime}\n`;
     });
-    table += '</table>';
-    const blob = new Blob([table], { type: 'application/vnd.ms-excel' });
+    const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `attendance_${selectedDate ? selectedDate : 'all'}.xls`;
+    a.download = `attendance_${selectedDate ? selectedDate : 'all'}.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 }
-// ...existing code...
 
-downloadBtn.addEventListener('click', downloadXLS);
+
+// Re-render table when date changes
+reportDateInput.addEventListener('change', renderTable);
+downloadBtn.addEventListener('click', downloadCSV);
